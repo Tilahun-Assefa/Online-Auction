@@ -10,7 +10,7 @@ namespace OnlineAuction.Controllers.Services.ProductService
          Task<ServiceResponse<List<GetProductDto>>> GetAllProducts();
          Task<ServiceResponse<GetProductDto>> GetProductById(int id);
          Task<ServiceResponse<List<GetProductDto>>> AddProduct(AddProductDto newProduct);
-         Task<ServiceResponse<GetProductDto>> UpdateProduct(UpdateProductDto updatedProduct);
+         Task<ServiceResponse<List<GetProductDto>>> UpdateProduct(UpdateProductDto updatedProduct);
          Task<ServiceResponse<List<GetProductDto>>> DeleteProduct(int id);        
     
     }

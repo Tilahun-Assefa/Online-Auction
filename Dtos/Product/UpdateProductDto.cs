@@ -7,5 +7,6 @@ namespace OnlineAuction.Dtos.Product
         public float Price { get; set; }
         public string Description { get; set; }
         public float Rating { get; set; }
+        public string[] Categories { get; set; }
     }
 }

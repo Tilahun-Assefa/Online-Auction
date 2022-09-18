@@ -75,8 +75,7 @@ namespace OnlineAuction.Controllers.Services.ProductService
                 {
                     _context.Products.Remove(product);
                     await _context.SaveChangesAsync();
-                    serviceResponse.Data = (_context.Products
-                    .Select(c => _mapper.Map<GetProductDto>(c))).ToList();
+                    serviceResponse.Data = (_context.Products.Select(c => _mapper.Map<GetProductDto>(c))).ToList();
                 }
                 else
                 {
@@ -113,9 +112,9 @@ namespace OnlineAuction.Controllers.Services.ProductService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetProductDto>> UpdateProduct(UpdateProductDto updatedProduct)
+        public async Task<ServiceResponse<List<GetProductDto>>> UpdateProduct(UpdateProductDto updatedProduct)
         {
-            ServiceResponse<GetProductDto> serviceResponse = new ServiceResponse<GetProductDto>();
+            ServiceResponse<List<GetProductDto>> serviceResponse = new ServiceResponse<List<GetProductDto>>();
             try
             {
                 Product product = await _context.Products.FirstOrDefaultAsync(p => p.Id == updatedProduct.Id);
@@ -125,9 +124,26 @@ namespace OnlineAuction.Controllers.Services.ProductService
                     product.Price = updatedProduct.Price;
                     product.Description = updatedProduct.Description;
                     product.Rating = updatedProduct.Rating;
+                    foreach (string nc in updatedProduct.Categories)
+                    {
+                        Category category = await _context.Categories.FirstOrDefaultAsync(c => c.Name == nc);
+                        if (category == null)
+                        {
+                            serviceResponse.Success = false;
+                            serviceResponse.Message = "Category not found.";
+                            return serviceResponse;
+                        }
+                        ProductCategory productcategory = new ProductCategory
+                        {
+                            Product = product,
+                            Category = category
+                        };
+                        pc.Add(productcategory);
+                    }
+                    product.ProductCategories = pc;
                     _context.Products.Update(product);
                     await _context.SaveChangesAsync();
-                    serviceResponse.Data = _mapper.Map<GetProductDto>(product);
+                    serviceResponse.Data = (_context.Products.Select(c => _mapper.Map<GetProductDto>(c))).ToList();
                 }
                 else
                 {
