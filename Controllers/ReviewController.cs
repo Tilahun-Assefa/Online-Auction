@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using OnlineAuction.Controllers.services.ReviewService;
+using OnlineAuction.services.ReviewService;
 using OnlineAuction.Dtos.Review;
 
 namespace OnlineAuction.Controllers

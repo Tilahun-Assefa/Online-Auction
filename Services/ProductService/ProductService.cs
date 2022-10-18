@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using OnlineAuction.Controllers.Services.ProductService;
 using OnlineAuction.Dtos.Product;
 using OnlineAuction.Models;
 using AutoMapper;
@@ -9,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System;
 
-namespace OnlineAuction.Controllers.Services.ProductService
+namespace OnlineAuction.Services.ProductService
 {
     public class ProductService : IProductService
     {

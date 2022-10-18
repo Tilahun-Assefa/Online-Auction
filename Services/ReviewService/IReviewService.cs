@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using OnlineAuction.Dtos.Review;
 using OnlineAuction.Models;
 
-namespace OnlineAuction.Controllers.services.ReviewService
+namespace OnlineAuction.services.ReviewService
 {
     public interface IReviewService
     {

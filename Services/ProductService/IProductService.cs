@@ -3,7 +3,7 @@ using OnlineAuction.Models;
 using OnlineAuction.Dtos.Product;
 using System.Collections.Generic;
 
-namespace OnlineAuction.Controllers.Services.ProductService
+namespace OnlineAuction.Services.ProductService
 {
     public interface IProductService
     {

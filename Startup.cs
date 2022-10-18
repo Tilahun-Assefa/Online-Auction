@@ -10,13 +10,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using OnlineAuction.Controllers.services.ReviewService;
-using OnlineAuction.Controllers.Services.ProductService;
+using OnlineAuction.services.ReviewService;
+using OnlineAuction.Services.ProductService;
 using OnlineAuction.Services.ProductCategoryService;
 using AutoMapper;
 using OnlineAuction.Data;
 using Microsoft.EntityFrameworkCore;
 using OnlineAuction.Services.CategoryService;
+using OnlineAuction.Services.SeedService;
 
 namespace OnlineAuction
 {
@@ -36,6 +37,7 @@ namespace OnlineAuction
             services.AddControllers();
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ISeedService, SeedService>();
             services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
             services.AddScoped<ICategoryService, CategoryService>();

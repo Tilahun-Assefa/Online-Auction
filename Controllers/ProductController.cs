@@ -1,8 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using OnlineAuction.Controllers.Services.ProductService;
 using OnlineAuction.Dtos.Product;
-using OnlineAuction.Models;
+using OnlineAuction.Services.ProductService;
 
 namespace OnlineAuction.Controllers
 {   
