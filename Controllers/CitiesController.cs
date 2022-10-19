@@ -22,13 +22,13 @@ namespace OnlineAuction.Controllers
         }
 
         // GET: api/Cities
+        // GET: api/Cities/?pageIndex=0&pageSize=10
+        // GET: api/Cities/?pageIndex=0&pageSize=10&sortColumn=name&sortOrder=asc
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<City>>> GetCities(int pageIndex = 0, int pageSize = 10)
+        public async Task<ActionResult<ApiResult<City>>> GetCities(int pageIndex = 0, int pageSize = 10, 
+            string sortColumn=null, string sortOrder = null)
         {
-            return await _context.Cities
-                .Skip(pageIndex * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            return await ApiResult<City>.CreateAsync(_context.Cities, pageIndex, pageSize, sortColumn, sortOrder);                
         }
 
         // GET: api/Cities/5
