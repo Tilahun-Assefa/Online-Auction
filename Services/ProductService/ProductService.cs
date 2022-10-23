@@ -7,6 +7,9 @@ using OnlineAuction.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using OnlineAuction.Dtos.Category;
 
 namespace OnlineAuction.Services.ProductService
 {
@@ -20,7 +23,7 @@ namespace OnlineAuction.Services.ProductService
             _mapper = mapper;
             _context = context;
         }
-        public async Task<ServiceResponse<List<GetProductDto>>> AddProduct(AddProductDto newProduct)
+        public async Task<ServiceResponse<List<GetProductDto>>> PostProduct(GetProductDto newProduct)
         {
             ServiceResponse<List<GetProductDto>> serviceResponse = new ServiceResponse<List<GetProductDto>>();
             Product product = _mapper.Map<Product>(newProduct);
@@ -30,9 +33,9 @@ namespace OnlineAuction.Services.ProductService
                 if (searchproduct == null)
                 {
                     await _context.Products.AddAsync(product);
-                    foreach (string nc in newProduct.Categories)
+                    foreach (GetCategoryDto nc in newProduct.Categories)
                     {
-                        Category category = await _context.Categories.FirstOrDefaultAsync(c => c.Name == nc);
+                        Category category = await _context.Categories.FirstOrDefaultAsync(c => c.Name == nc.Name);
                         if (category == null)
                         {
                             serviceResponse.Success = false;
@@ -111,51 +114,31 @@ namespace OnlineAuction.Services.ProductService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetProductDto>>> UpdateProduct(UpdateProductDto updatedProduct)
+        public async Task<ServiceResponse<GetProductDto>> UpdateProduct(int id, UpdateProductDto updatedProduct)
         {
-            ServiceResponse<List<GetProductDto>> serviceResponse = new ServiceResponse<List<GetProductDto>>();
+            ServiceResponse<GetProductDto> serviceResponse = new ServiceResponse<GetProductDto>();
+            _context.Entry(updatedProduct).State = EntityState.Modified;
+
             try
             {
-                Product product = await _context.Products.FirstOrDefaultAsync(p => p.Id == updatedProduct.Id);
-                if (product != null)
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (ProductExists(id))
                 {
-                    product.Title = updatedProduct.Title;
-                    product.Price = updatedProduct.Price;
-                    product.Description = updatedProduct.Description;
-                    product.Rating = updatedProduct.Rating;
-                    foreach (string nc in updatedProduct.Categories)
-                    {
-                        Category category = await _context.Categories.FirstOrDefaultAsync(c => c.Name == nc);
-                        if (category == null)
-                        {
-                            serviceResponse.Success = false;
-                            serviceResponse.Message = "Category not found.";
-                            return serviceResponse;
-                        }
-                        ProductCategory productcategory = new ProductCategory
-                        {
-                            Product = product,
-                            Category = category
-                        };
-                        pc.Add(productcategory);
-                    }
-                    product.ProductCategories = pc;
-                    _context.Products.Update(product);
-                    await _context.SaveChangesAsync();
-                    serviceResponse.Data = (_context.Products.Select(c => _mapper.Map<GetProductDto>(c))).ToList();
+                    return serviceResponse;
                 }
                 else
                 {
-                    serviceResponse.Success = false;
-                    serviceResponse.Message = "Product not found.";
-                }
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.Success = false;
-                serviceResponse.Message = ex.Message;
+                    throw;
+                }                
             }
             return serviceResponse;
         }
+        private bool ProductExists(int id)
+        {
+            return _context.Products.Any(e => e.Id == id);
+        }       
     }
 }
