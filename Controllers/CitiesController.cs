@@ -25,10 +25,10 @@ namespace OnlineAuction.Controllers
         // GET: api/Cities/?pageIndex=0&pageSize=10
         // GET: api/Cities/?pageIndex=0&pageSize=10&sortColumn=name&sortOrder=asc
         [HttpGet]
-        public async Task<ActionResult<ApiResult<City>>> GetCities(int pageIndex = 0, int pageSize = 10, 
-            string sortColumn=null, string sortOrder = null, string filterColumn = null, string filterQuery = null)
+        public async Task<ActionResult<ApiResult<City>>> GetCities(int pageIndex = 0, int pageSize = 10,
+            string sortColumn = null, string sortOrder = null, string filterColumn = null, string filterQuery = null)
         {
-            return await ApiResult<City>.CreateAsync(_context.Cities, pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);                
+            return await ApiResult<City>.CreateAsync(_context.Cities, pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
         }
 
         // GET: api/Cities/5
@@ -106,6 +106,17 @@ namespace OnlineAuction.Controllers
         private bool CityExists(int id)
         {
             return _context.Cities.Any(e => e.Id == id);
+        }
+
+        // POST: api/Cities/IsDupeCity
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        [Route("IsDupeCity")]
+        public bool IsDupeCity(City city)
+        {
+            return _context.Cities.Any(e =>
+                e.Name == city.Name && e.Lat == city.Lat && e.Lon == city.Lon && e.CountryId == city.CountryId && e.Id != city.Id
+            );
         }
     }
 }

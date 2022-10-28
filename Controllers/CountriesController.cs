@@ -22,7 +22,7 @@ namespace OnlineAuction.Controllers
         }
 
         // GET: api/Countries
-        [HttpGet]        
+        [HttpGet]
         public async Task<ActionResult<ApiResult<Country>>> GetCountries(int pageIndex = 0, int pageSize = 10,
            string sortColumn = null, string sortOrder = null, string filterColumn = null, string filterQuery = null)
         {
@@ -104,6 +104,21 @@ namespace OnlineAuction.Controllers
         private bool CountryExists(int id)
         {
             return _context.Countries.Any(e => e.Id == id);
+        }
+
+        // POST: api/Countries/IsDupeCountry
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        [Route("IsDupeField")]
+        public bool IsDupeField(int CountryId, string fieldName, string fieldValue)
+        {
+            switch (fieldName)
+            {
+                case "Name": return _context.Countries.Any(c => c.Name == fieldValue && c.Id != CountryId);
+                case "ISO2": return _context.Countries.Any(c => c.ISO2 == fieldValue && c.Id != CountryId);
+                case "ISO3": return _context.Countries.Any(c => c.ISO3 == fieldValue && c.Id != CountryId);
+                default: return false;
+            }
         }
     }
 }
