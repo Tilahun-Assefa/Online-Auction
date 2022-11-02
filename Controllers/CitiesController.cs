@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnlineAuction.Data;
+using OnlineAuction.Dtos.City;
 using OnlineAuction.Models;
 
 namespace OnlineAuction.Controllers
@@ -25,10 +26,14 @@ namespace OnlineAuction.Controllers
         // GET: api/Cities/?pageIndex=0&pageSize=10
         // GET: api/Cities/?pageIndex=0&pageSize=10&sortColumn=name&sortOrder=asc
         [HttpGet]
-        public async Task<ActionResult<ApiResult<City>>> GetCities(int pageIndex = 0, int pageSize = 10,
+        public async Task<ActionResult<ApiResult<GetCityDTO>>> GetCities(int pageIndex = 0, int pageSize = 10,
             string sortColumn = null, string sortOrder = null, string filterColumn = null, string filterQuery = null)
         {
-            return await ApiResult<City>.CreateAsync(_context.Cities, pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
+            return await ApiResult<GetCityDTO>.CreateAsync(
+                _context.Cities.Select(c => new GetCityDTO()
+                {
+                    Id= c.Id, Name = c.Name, Lat = c.Lat, Lon= c.Lon, CountryId=c.Country.Id, CountryName = c.Country.Name
+                }), pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
         }
 
         // GET: api/Cities/5
