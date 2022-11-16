@@ -1,15 +1,16 @@
+using Duende.IdentityServer.EntityFramework.Options;
+using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using OnlineAuction.Models;
 
 namespace OnlineAuction.Data
 {
-    public class DataContext : DbContext
+    public class DataContext : ApiAuthorizationDbContext<ApplicationUser>
     {
-        #region Constructor
-        public DataContext() : base()
-        {
-        }
-        public DataContext(DbContextOptions<DataContext> options) : base(options)
+        #region Constructor        
+        public DataContext(DbContextOptions<DataContext> options, 
+            IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
 
         }

@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using OnlineAuction.services.ReviewService;
 using OnlineAuction.Dtos.Review;
+using OnlineAuction.Models;
 
 namespace OnlineAuction.Controllers
 {
@@ -28,13 +29,13 @@ namespace OnlineAuction.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddReview(AddReviewDto newReview)
+        public async Task<IActionResult> AddReview(Review newReview)
         {
             return Ok(await _reviewService.AddReview(newReview));
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateReview(UpdateReviewDto updatedReview)
+        public async Task<IActionResult> UpdateReview(Review updatedReview)
         {
             return Ok(await _reviewService.UpdateReview(updatedReview));
         }

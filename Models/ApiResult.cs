@@ -14,7 +14,6 @@ namespace OnlineAuction.Models
         ///<summary>
         ///Private constructor called by the CreateAsync method
         ///</summary>
-
         private ApiResult(List<T> data, int count, int pageIndex, int pageSize,
             string sortColumn, string sortOrder, string filterColumn, string filterQuery)
         {

@@ -1,23 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using OnlineAuction.services.ReviewService;
-using OnlineAuction.Services.ProductService;
-using OnlineAuction.Services.ProductCategoryService;
-using AutoMapper;
 using OnlineAuction.Data;
-using Microsoft.EntityFrameworkCore;
+using OnlineAuction.Models;
+using OnlineAuction.services.ReviewService;
 using OnlineAuction.Services.CategoryService;
-using OnlineAuction.Services.SeedService;
+using OnlineAuction.Services.ProductCategoryService;
+using OnlineAuction.Services.ProductService;
 
 namespace OnlineAuction
 {
@@ -35,9 +29,7 @@ namespace OnlineAuction
         {
             services.AddDbContext<DataContext>(option => option.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
-            services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<ISeedService, SeedService>();
             services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
             services.AddScoped<ICategoryService, CategoryService>();
@@ -47,6 +39,18 @@ namespace OnlineAuction
                 options.JsonSerializerOptions.DictionaryKeyPolicy = null;
             });
             services.AddCors();
+
+            //add asp.net core identity support
+            services.AddDefaultIdentity<ApplicationUser>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+                options.Password.RequireDigit = true;
+            })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<DataContext>();
+
+            services.AddIdentityServer().AddApiAuthorization<ApplicationUser, DataContext>();
+            services.AddAuthentication().AddIdentityServerJwt();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,7 +70,8 @@ namespace OnlineAuction
             // app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseAuthentication();
+            app.UseIdentityServer();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

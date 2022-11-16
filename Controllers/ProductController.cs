@@ -3,12 +3,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnlineAuction.Dtos.Product;
+using OnlineAuction.Models;
 using OnlineAuction.Services.ProductService;
 
 namespace OnlineAuction.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("[controller]")]
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -17,34 +18,43 @@ namespace OnlineAuction.Controllers
             _productService = productService;
         }
 
-        [HttpGet("GetAll")]
+        // GET: api/Product        
+        [HttpGet]
         public async Task<IActionResult> GetProducts()
         {
-            // throw new System.Exception();            
+            // return list of products            
             return Ok(await _productService.GetAllProducts());
         }
 
+        // GET: api/Product/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProduct(int id)
         {
-            return Ok(await _productService.GetProductById(id));
+            var serviceResponse = await _productService.GetProductById(id);
+
+            if (serviceResponse.Success == false)
+            {
+                return NotFound();
+            }
+            return Ok(serviceResponse);
         }
 
+        // POST: api/Cities
         [HttpPost]
-        public async Task<IActionResult> PostProduct(GetProductDto newProduct)
-        {           
+        public async Task<IActionResult> PostProduct(AddProductDto newProduct)
+        {
             try
             {
-                await _productService.PostProduct(newProduct);
-                return CreatedAtAction("GetProduct", new { id = newProduct.Id }, newProduct);
+                var product = await _productService.PostProduct(newProduct);
+                return CreatedAtAction("GetProduct", new { id = product.Data.Id }, product.Data);
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
                 throw;
             }
-            
         }
 
+        // PUT: api/Cities/5
         [HttpPut]
         public async Task<IActionResult> PutProduct(int id, UpdateProductDto updatedProduct)
         {
@@ -52,22 +62,27 @@ namespace OnlineAuction.Controllers
             {
                 return BadRequest();
             }
-            try
-            {
-                await _productService.UpdateProduct(id, updatedProduct);
-            }
-            catch (DbUpdateConcurrencyException)
+
+            var check = await _productService.UpdateProduct(updatedProduct);
+
+            if (check == false)
             {
                 return NotFound();
             }
             return NoContent();
         }
 
+        // DELETE: api/Cities/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-            return Ok(await _productService.DeleteProduct(id));
-        }
+            var check = await _productService.DeleteProduct(id);
+            if (check == false)
+            {
+                return NotFound();
+            }         
 
+            return NoContent();
+        }
     }
 }

@@ -9,8 +9,8 @@ namespace OnlineAuction.Services.CategoryService
     {
          Task<ServiceResponse<List<GetCategoryDto>>> GetAllCategories();
          Task<ServiceResponse<GetCategoryDto>> GetCategoryById(int id);
-         Task<ServiceResponse<List<GetCategoryDto>>> AddCategory(AddCategoryDto newReview);
-         Task<ServiceResponse<GetCategoryDto>> UpdateCategory(UpdateCategoryDto updatedReview);
-         Task<ServiceResponse<List<GetCategoryDto>>> DeleteCategory(int id); 
+         Task<ServiceResponse<GetCategoryDto>> AddCategory(Category newCategory);
+         Task<bool> UpdateCategory(Category updatedCategory);
+         Task<bool> DeleteCategory(int id); 
     }
 }

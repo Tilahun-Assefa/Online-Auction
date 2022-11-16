@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using OnlineAuction.Data;
@@ -12,31 +11,27 @@ namespace OnlineAuction.Services.CategoryService
 {
     public class CategoryService : ICategoryService
     {
-        private readonly IMapper _mapper;
         private readonly DataContext _context;
-        public CategoryService(IMapper mapper, DataContext context)
+        public CategoryService(DataContext context)
         {
-            _mapper = mapper;
             _context = context;
         }
 
-        public async Task<ServiceResponse<List<GetCategoryDto>>> AddCategory(AddCategoryDto newCategory)
+        public async Task<ServiceResponse<GetCategoryDto>> AddCategory(Category newCategory)
         {
-            ServiceResponse<List<GetCategoryDto>> serviceResponse = new ServiceResponse<List<GetCategoryDto>>();
-            Category category = _mapper.Map<Category>(newCategory);
+            ServiceResponse<GetCategoryDto> serviceResponse = new ServiceResponse<GetCategoryDto>();
             try
             {
                 Category searchCat = await _context.Categories.FirstOrDefaultAsync(c => c.Name == newCategory.Name);
                 if (searchCat == null)
                 {
-                    await _context.Categories.AddAsync(category);
+                    await _context.Categories.AddAsync(newCategory);
                     await _context.SaveChangesAsync();
-                    serviceResponse.Data = (_context.Categories.Select(c => _mapper.Map<GetCategoryDto>(c))).ToList();
                 }
                 else
                 {
                     serviceResponse.Success = false;
-                    serviceResponse.Message = "Category with the same name Already Registered.";
+                    serviceResponse.Message = "Category with the same name is Already Registered.";
                 }
             }
             catch (Exception ex)
@@ -47,9 +42,8 @@ namespace OnlineAuction.Services.CategoryService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetCategoryDto>>> DeleteCategory(int id)
+        public async Task<bool> DeleteCategory(int id)
         {
-            ServiceResponse<List<GetCategoryDto>> serviceResponse = new ServiceResponse<List<GetCategoryDto>>();
             try
             {
                 Category category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
@@ -57,21 +51,17 @@ namespace OnlineAuction.Services.CategoryService
                 {
                     _context.Categories.Remove(category);
                     await _context.SaveChangesAsync();
-                    serviceResponse.Data = (_context.Products
-                    .Select(c => _mapper.Map<GetCategoryDto>(c))).ToList();
                 }
                 else
                 {
-                    serviceResponse.Success = false;
-                    serviceResponse.Message = "Product not found.";
+                    return false;
                 }
             }
             catch (Exception ex)
             {
-                serviceResponse.Success = false;
-                serviceResponse.Message = ex.Message;
+                return false;
             }
-            return serviceResponse;
+            return true;
         }
 
         public async Task<ServiceResponse<List<GetCategoryDto>>> GetAllCategories()
@@ -80,7 +70,10 @@ namespace OnlineAuction.Services.CategoryService
             try
             {
                 List<Category> categories = await _context.Categories.ToListAsync();
-                serviceResponse.Data = (categories.Select(c => _mapper.Map<GetCategoryDto>(c))).ToList();
+                serviceResponse.Data = categories.Select(c => new GetCategoryDto()
+                {
+                    Name = c.Name
+                }).ToList();
             }
             catch (Exception ex)
             {
@@ -96,7 +89,10 @@ namespace OnlineAuction.Services.CategoryService
             try
             {
                 Category category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
-                serviceResponse.Data = _mapper.Map<GetCategoryDto>(category);
+                serviceResponse.Data = new GetCategoryDto()
+                {
+                    Name = category.Name
+                };
             }
             catch (Exception ex)
             {
@@ -106,31 +102,21 @@ namespace OnlineAuction.Services.CategoryService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetCategoryDto>> UpdateCategory(UpdateCategoryDto updatedCategory)
+        public async Task<bool> UpdateCategory(Category updatedCategory)
         {
-            ServiceResponse<GetCategoryDto> serviceResponse = new ServiceResponse<GetCategoryDto>();
+            _context.Entry(updatedCategory).State = EntityState.Modified;
+
             try
             {
-                Category category = await _context.Categories.FirstOrDefaultAsync(p => p.Id == updatedCategory.Id);
-                if (category != null)
-                {
-                    category.Name = updatedCategory.Name;
-                    _context.Categories.Update(category);
-                    await _context.SaveChangesAsync();
-                    serviceResponse.Data = _mapper.Map<GetCategoryDto>(category);
-                }
-                else
-                {
-                    serviceResponse.Success = false;
-                    serviceResponse.Message = "Product not found.";
-                }
+                await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch (DbUpdateConcurrencyException)
             {
-                serviceResponse.Success = false;
-                serviceResponse.Message = ex.Message;
+
+                return false;
+
             }
-            return serviceResponse;
+            return true;
         }
     }
 }

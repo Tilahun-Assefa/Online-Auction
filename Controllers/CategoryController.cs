@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using OnlineAuction.Dtos.Category;
+using OnlineAuction.Models;
 using OnlineAuction.Services.CategoryService;
 
 namespace OnlineAuction.Controllers
@@ -26,13 +27,13 @@ namespace OnlineAuction.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddProduct(AddCategoryDto newCategory)
+        public async Task<IActionResult> AddProduct(Category newCategory)
         {
             return Ok(await _categoryService.AddCategory(newCategory));
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateProduct(UpdateCategoryDto updatedCategory)
+        public async Task<IActionResult> UpdateProduct(Category updatedCategory)
         {
             return Ok(await _categoryService.UpdateCategory(updatedCategory));
         }

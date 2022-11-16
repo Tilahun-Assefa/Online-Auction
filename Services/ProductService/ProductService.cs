@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using OnlineAuction.Dtos.Product;
 using OnlineAuction.Models;
-using AutoMapper;
 using OnlineAuction.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -15,43 +14,44 @@ namespace OnlineAuction.Services.ProductService
 {
     public class ProductService : IProductService
     {
-        private readonly IMapper _mapper;
         private readonly DataContext _context;
         public List<ProductCategory> pc = new List<ProductCategory>();
-        public ProductService(IMapper mapper, DataContext context)
+        public ProductService(DataContext context)
         {
-            _mapper = mapper;
             _context = context;
         }
-        public async Task<ServiceResponse<List<GetProductDto>>> PostProduct(GetProductDto newProduct)
+
+        public async Task<ServiceResponse<GetProductDto>> PostProduct(AddProductDto newProduct)
         {
-            ServiceResponse<List<GetProductDto>> serviceResponse = new ServiceResponse<List<GetProductDto>>();
-            Product product = _mapper.Map<Product>(newProduct);
+            ServiceResponse<GetProductDto> serviceResponse = new ServiceResponse<GetProductDto>();
+
             try
             {
                 Product searchproduct = await _context.Products.FirstOrDefaultAsync(p => p.Title == newProduct.Title);
+
                 if (searchproduct == null)
                 {
-                    await _context.Products.AddAsync(product);
-                    foreach (GetCategoryDto nc in newProduct.Categories)
+                    Product prd = new Product()
                     {
-                        Category category = await _context.Categories.FirstOrDefaultAsync(c => c.Name == nc.Name);
-                        if (category == null)
-                        {
-                            serviceResponse.Success = false;
-                            serviceResponse.Message = "Category not found.";
-                            return serviceResponse;
-                        }
+                        Title = newProduct.Title,
+                        Price = newProduct.Price,
+                        Description = newProduct.Description
+                    };
+
+                    foreach (string cat in newProduct.Categories)
+                    {
                         ProductCategory productcategory = new ProductCategory
                         {
-                            Product = product,
-                            Category = category
+                            Product = prd,
+                            Category = await _context.Categories.FirstOrDefaultAsync(c => c.Name == cat)
                         };
                         pc.Add(productcategory);
                     }
-                    product.ProductCategories = pc;
+
+                    prd.ProductCategories = pc;
+
+                    _context.Products.Add(prd);
                     await _context.SaveChangesAsync();
-                    serviceResponse.Data = _context.Products.Select(c => _mapper.Map<GetProductDto>(c)).ToList();
                 }
                 else
                 {
@@ -67,56 +67,79 @@ namespace OnlineAuction.Services.ProductService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetProductDto>>> DeleteProduct(int id)
+
+        public async Task<bool> DeleteProduct(int id)
         {
-            ServiceResponse<List<GetProductDto>> serviceResponse = new ServiceResponse<List<GetProductDto>>();
             try
             {
-                Product product = await _context.Products.FirstOrDefaultAsync(c => c.Id == id);
+                Product product = await _context.Products.FindAsync(id);
                 if (product != null)
                 {
                     _context.Products.Remove(product);
                     await _context.SaveChangesAsync();
-                    serviceResponse.Data = (_context.Products.Select(c => _mapper.Map<GetProductDto>(c))).ToList();
-                }
-                else
-                {
-                    serviceResponse.Success = false;
-                    serviceResponse.Message = "Product not found.";
                 }
             }
             catch (Exception ex)
             {
-                serviceResponse.Success = false;
-                serviceResponse.Message = ex.Message;
+                return false;
             }
-            return serviceResponse;
+            return true;
         }
 
         public async Task<ServiceResponse<List<GetProductDto>>> GetAllProducts()
         {
             ServiceResponse<List<GetProductDto>> serviceResponse = new ServiceResponse<List<GetProductDto>>();
-            List<Product> dbProducts = await _context.Products
-            .Include(p => p.Reviews)
-            .Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
-            serviceResponse.Data = (dbProducts.Select(c => _mapper.Map<GetProductDto>(c))).ToList();
+            //List<Product> dbProducts = await _context.Products
+            //.Include(p => p.Reviews)
+            //.Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
+
+            serviceResponse.Data = await _context.Products.Select(p => new GetProductDto()
+            {
+                Id = p.Id,
+                Title = p.Title,
+                Price = p.Price,
+                Rating = p.Rating,
+                Description = p.Description
+            }).ToListAsync();
             return serviceResponse;
         }
 
         public async Task<ServiceResponse<GetProductDto>> GetProductById(int id)
         {
             ServiceResponse<GetProductDto> serviceResponse = new ServiceResponse<GetProductDto>();
-            Product product = await _context.Products
-            .Include(p => p.Reviews)
+            List<string> rev = new List<string>();
+            List<string> cat = new List<string>();
+
+            Product product = await _context.Products.Include(p => p.Reviews)
             .Include(p => p.ProductCategories).ThenInclude(pc => pc.Category)
             .FirstOrDefaultAsync(p => p.Id == id);
-            serviceResponse.Data = _mapper.Map<GetProductDto>(product);
+
+            GetProductDto getProduct = new GetProductDto()
+            {
+                Id = product.Id,
+                Title = product.Title,
+                Price = product.Price,
+                Rating = product.Rating,
+                Description = product.Description
+            };
+
+            foreach (Review r in product.Reviews)
+            {
+                rev.Add(r.Comment);
+            }
+            foreach (ProductCategory pc in product.ProductCategories)
+            {
+                cat.Add(pc.Category.Name);
+            }
+
+            getProduct.Reviews = rev;
+            getProduct.Categories = cat;
+            serviceResponse.Data = getProduct;
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetProductDto>> UpdateProduct(int id, UpdateProductDto updatedProduct)
+        public async Task<bool> UpdateProduct(UpdateProductDto updatedProduct)
         {
-            ServiceResponse<GetProductDto> serviceResponse = new ServiceResponse<GetProductDto>();
             _context.Entry(updatedProduct).State = EntityState.Modified;
 
             try
@@ -125,20 +148,15 @@ namespace OnlineAuction.Services.ProductService
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (ProductExists(id))
-                {
-                    return serviceResponse;
-                }
-                else
-                {
-                    throw;
-                }                
+
+                return false;
+
             }
-            return serviceResponse;
+            return true;
         }
         private bool ProductExists(int id)
         {
             return _context.Products.Any(e => e.Id == id);
-        }       
+        }
     }
 }
