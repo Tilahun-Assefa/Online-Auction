@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace OnlineAuction.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("api/[controller]/[action]")]
     public class SeedController : ControllerBase
     {
         private readonly DataContext _context;
