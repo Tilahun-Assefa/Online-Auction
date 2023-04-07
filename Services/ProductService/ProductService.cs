@@ -114,12 +114,7 @@ namespace OnlineAuction.Services.ProductService
             .Include(p => p.ProductCategories).ThenInclude(pc => pc.Category)
             .FirstOrDefaultAsync(p => p.Id == id);
 
-            GetProductDto getProduct = new GetProductDto()
-            {
-                Id = product.Id,
-                Title = product.Title,
-                Price = product.Price,
-                Rating = product.Rating,
+            serviceResponse.Data = product;
                 Description = product.Description
             };
 
