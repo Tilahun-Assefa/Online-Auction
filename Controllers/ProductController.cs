@@ -39,23 +39,8 @@ namespace OnlineAuction.Controllers
             return Ok(serviceResponse);
         }
 
-        // POST: api/Cities
-        [HttpPost]
-        public async Task<IActionResult> PostProduct(AddProductDto newProduct)
-        {
-            try
-            {
-                var product = await _productService.PostProduct(newProduct);
-                return CreatedAtAction("GetProduct", new { id = product.Data.Id }, product.Data);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
-        // PUT: api/Cities/5
-        [HttpPut]
+        // PUT: api/Product/5
+        [HttpPut("{id}")]
         public async Task<IActionResult> PutProduct(int id, UpdateProductDto updatedProduct)
         {
             if (id != updatedProduct.Id)
@@ -65,22 +50,37 @@ namespace OnlineAuction.Controllers
 
             var check = await _productService.UpdateProduct(updatedProduct);
 
-            if (check == false)
+            if (!check)
             {
                 return NotFound();
             }
             return NoContent();
         }
 
-        // DELETE: api/Cities/5
+        // POST: api/Product
+        [HttpPost]
+        public async Task<ActionResult<ServiceResponse<Product>>> PostProduct(AddProductDto newProduct)
+        {
+            try
+            {
+                var serviceResponse = await _productService.PostProduct(newProduct);
+                return CreatedAtAction("GetProduct", new { id = serviceResponse.Data.Id }, serviceResponse.Data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        // DELETE: api/Product/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var check = await _productService.DeleteProduct(id);
-            if (check == false)
+            if (!check)
             {
                 return NotFound();
-            }         
+            }
 
             return NoContent();
         }

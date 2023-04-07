@@ -9,13 +9,15 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using OnlineAuction.Dtos.Category;
+using OnlineAuction.Dtos.Review;
+using System.Diagnostics.Metrics;
 
 namespace OnlineAuction.Services.ProductService
 {
     public class ProductService : IProductService
     {
         private readonly DataContext _context;
-        public List<ProductCategory> pc = new List<ProductCategory>();
+        public List<ProductCategory> pc;
         public ProductService(DataContext context)
         {
             _context = context;
@@ -23,7 +25,8 @@ namespace OnlineAuction.Services.ProductService
 
         public async Task<ServiceResponse<GetProductDto>> PostProduct(AddProductDto newProduct)
         {
-            ServiceResponse<GetProductDto> serviceResponse = new ServiceResponse<GetProductDto>();
+            ServiceResponse<GetProductDto> serviceResponse = new();
+            pc = new();
 
             try
             {
@@ -31,16 +34,17 @@ namespace OnlineAuction.Services.ProductService
 
                 if (searchproduct == null)
                 {
-                    Product prd = new Product()
+                    Product prd = new()
                     {
                         Title = newProduct.Title,
                         Price = newProduct.Price,
-                        Description = newProduct.Description
+                        Description = newProduct.Description,
+                        Rating=newProduct.Rating                        
                     };
 
                     foreach (string cat in newProduct.Categories)
                     {
-                        ProductCategory productcategory = new ProductCategory
+                        ProductCategory productcategory = new()
                         {
                             Product = prd,
                             Category = await _context.Categories.FirstOrDefaultAsync(c => c.Name == cat)
@@ -52,6 +56,10 @@ namespace OnlineAuction.Services.ProductService
 
                     _context.Products.Add(prd);
                     await _context.SaveChangesAsync();
+                    serviceResponse.Data = new GetProductDto(){
+                        Id=prd.Id, Description= prd.Description, Price=prd.Price, Rating= prd.Rating, Title= prd.Title };
+                    serviceResponse.Success = true;
+                    serviceResponse.Message = "Added succesfully";
                 }
                 else
                 {
@@ -73,13 +81,14 @@ namespace OnlineAuction.Services.ProductService
             try
             {
                 Product product = await _context.Products.FindAsync(id);
-                if (product != null)
+                if (product == null)
                 {
-                    _context.Products.Remove(product);
-                    await _context.SaveChangesAsync();
+                    return false;
                 }
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }
@@ -88,64 +97,110 @@ namespace OnlineAuction.Services.ProductService
 
         public async Task<ServiceResponse<List<GetProductDto>>> GetAllProducts()
         {
-            ServiceResponse<List<GetProductDto>> serviceResponse = new ServiceResponse<List<GetProductDto>>();
-            //List<Product> dbProducts = await _context.Products
-            //.Include(p => p.Reviews)
-            //.Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
-
-            serviceResponse.Data = await _context.Products.Select(p => new GetProductDto()
+            ServiceResponse<List<GetProductDto>> serviceResponse = new()
             {
-                Id = p.Id,
-                Title = p.Title,
-                Price = p.Price,
-                Rating = p.Rating,
-                Description = p.Description
-            }).ToListAsync();
+                //List<Product> dbProducts = await _context.Products
+                //.Include(p => p.Reviews)
+                //.Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
+
+                Data = await _context.Products.Select(p => new GetProductDto()
+                {
+                    Id = p.Id,
+                    Title = p.Title,
+                    Price = p.Price,
+                    Rating = p.Rating,
+                    Description = p.Description
+                }).ToListAsync(),
+                Success = true,
+                Message = "Ok"
+            };
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetProductDto>> GetProductById(int id)
+        public async Task<ServiceResponse<ProductDto>> GetProductById(int id)
         {
-            ServiceResponse<GetProductDto> serviceResponse = new ServiceResponse<GetProductDto>();
-            List<string> rev = new List<string>();
-            List<string> cat = new List<string>();
+            ServiceResponse<ProductDto> serviceResponse = new();
 
+            List<GetReviewDto> rev = new();
+            List<string> cat = new();
             Product product = await _context.Products.Include(p => p.Reviews)
-            .Include(p => p.ProductCategories).ThenInclude(pc => pc.Category)
-            .FirstOrDefaultAsync(p => p.Id == id);
+                        .Include(p => p.ProductCategories).ThenInclude(pc => pc.Category)
+                        .FirstOrDefaultAsync(p => p.Id == id);
+            if (product == null)
+            {
+                serviceResponse.Success = false;
+                return serviceResponse;
+            }
 
-            serviceResponse.Data = product;
+            ProductDto productDto = new()
+            {
+                Id = product.Id,
+                Title = product.Title,
+                Price = product.Price,
+                Rating = product.Rating,
                 Description = product.Description
             };
 
             foreach (Review r in product.Reviews)
             {
-                rev.Add(r.Comment);
+                rev.Add(new GetReviewDto()
+                {
+                    Rating = r.Rating,
+                    Comment = r.Comment,
+                    TimeStamp = r.TimeStamp,
+                    User = r.User
+                });
             }
             foreach (ProductCategory pc in product.ProductCategories)
             {
                 cat.Add(pc.Category.Name);
             }
 
-            getProduct.Reviews = rev;
-            getProduct.Categories = cat;
-            serviceResponse.Data = getProduct;
+            productDto.Reviews = rev;
+            productDto.Categories = cat;
+
+            serviceResponse.Data = productDto;
+            
             return serviceResponse;
         }
 
         public async Task<bool> UpdateProduct(UpdateProductDto updatedProduct)
         {
-            _context.Entry(updatedProduct).State = EntityState.Modified;
-
+            pc = new();
             try
             {
-                await _context.SaveChangesAsync();
+                if (ProductExists(updatedProduct.Id))
+                {
+                    Product prd = new()
+                    {
+                        Id = updatedProduct.Id,
+                        Title = updatedProduct.Title,
+                        Price = updatedProduct.Price,
+                        Rating = updatedProduct.Rating,
+                        Description = updatedProduct.Description
+                    };
+
+                    foreach (string cat in updatedProduct.Categories)
+                    {
+                        ProductCategory prodcategory = new();
+                        prodcategory.Product = prd;
+                        prodcategory.Category = await _context.Categories.FirstOrDefaultAsync(c => c.Name == cat);
+                        
+                        pc.Add(prodcategory);
+                    }
+
+                    prd.ProductCategories = pc;
+                    _context.Entry(prd).State = EntityState.Modified;
+                    await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (DbUpdateConcurrencyException)
             {
-
-                return false;
-
+                throw;
             }
             return true;
         }

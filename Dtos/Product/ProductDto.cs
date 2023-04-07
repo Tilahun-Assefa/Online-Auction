@@ -4,10 +4,10 @@ using OnlineAuction.Dtos.Review;
 
 namespace OnlineAuction.Dtos.Product
 {
-    public class GetProductDto
+    public class ProductDto
     {
         #region constructor
-        public GetProductDto() { }
+        public ProductDto() { }
         #endregion
 
         #region properties
@@ -34,7 +34,17 @@ namespace OnlineAuction.Dtos.Product
         ///<summary>
         ///Product Customer rating 
         ///</summary>
-        public float Rating { get; set; }        
+        public float Rating { get; set; }
+
+        ///<summary>
+        ///List of categories
+        ///</summary>             
+        public List<string> Categories { set; get; }
+
+        ///<summary>
+        ///List of reviews
+        ///</summary>  
+        public List<GetReviewDto> Reviews { get; set; }
         #endregion
     }
 }

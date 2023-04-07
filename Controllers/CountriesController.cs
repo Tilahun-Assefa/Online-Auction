@@ -29,7 +29,11 @@ namespace OnlineAuction.Controllers
         {
             return await ApiResult<GetCountryDTO>.CreateAsync(_context.Countries.Select(c => new GetCountryDTO()
             {
-                Id= c.Id, Name = c.Name, ISO2 = c.ISO2, ISO3 = c.ISO3, TotCities = c.Cities.Count
+                Id = c.Id,
+                Name = c.Name,
+                ISO2 = c.ISO2,
+                ISO3 = c.ISO3,
+                TotCities = c.Cities.Count
             }), pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
         }
 
@@ -43,7 +47,6 @@ namespace OnlineAuction.Controllers
             {
                 return NotFound();
             }
-
             return country;
         }
 

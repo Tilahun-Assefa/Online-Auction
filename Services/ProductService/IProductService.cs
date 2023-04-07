@@ -9,7 +9,7 @@ namespace OnlineAuction.Services.ProductService
     public interface IProductService
     {
          Task<ServiceResponse<List<GetProductDto>>> GetAllProducts();
-         Task<ServiceResponse<GetProductDto>> GetProductById(int id);
+         Task<ServiceResponse<ProductDto>> GetProductById(int id);
          Task<ServiceResponse<GetProductDto>> PostProduct(AddProductDto newProduct);
          Task<bool> UpdateProduct(UpdateProductDto updatedProduct);
          Task<bool> DeleteProduct(int id);        
