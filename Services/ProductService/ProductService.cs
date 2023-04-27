@@ -39,7 +39,7 @@ namespace OnlineAuction.Services.ProductService
                         Title = newProduct.Title,
                         Price = newProduct.Price,
                         Description = newProduct.Description,
-                        Rating=newProduct.Rating                        
+                        Rating = newProduct.Rating
                     };
 
                     foreach (string cat in newProduct.Categories)
@@ -56,8 +56,14 @@ namespace OnlineAuction.Services.ProductService
 
                     _context.Products.Add(prd);
                     await _context.SaveChangesAsync();
-                    serviceResponse.Data = new GetProductDto(){
-                        Id=prd.Id, Description= prd.Description, Price=prd.Price, Rating= prd.Rating, Title= prd.Title };
+                    serviceResponse.Data = new GetProductDto()
+                    {
+                        Id = prd.Id,
+                        Description = prd.Description,
+                        Price = prd.Price,
+                        Rating = prd.Rating,
+                        Title = prd.Title
+                    };
                     serviceResponse.Success = true;
                     serviceResponse.Message = "Added succesfully";
                 }
@@ -74,7 +80,6 @@ namespace OnlineAuction.Services.ProductService
             }
             return serviceResponse;
         }
-
 
         public async Task<bool> DeleteProduct(int id)
         {
@@ -99,10 +104,6 @@ namespace OnlineAuction.Services.ProductService
         {
             ServiceResponse<List<GetProductDto>> serviceResponse = new()
             {
-                //List<Product> dbProducts = await _context.Products
-                //.Include(p => p.Reviews)
-                //.Include(p => p.ProductCategories).ThenInclude(pc => pc.Category).ToListAsync();
-
                 Data = await _context.Products.Select(p => new GetProductDto()
                 {
                     Id = p.Id,
@@ -160,37 +161,41 @@ namespace OnlineAuction.Services.ProductService
             productDto.Categories = cat;
 
             serviceResponse.Data = productDto;
-            
+
             return serviceResponse;
         }
 
         public async Task<bool> UpdateProduct(UpdateProductDto updatedProduct)
         {
-            pc = new();
             try
             {
                 if (ProductExists(updatedProduct.Id))
                 {
-                    Product prd = new()
+                    var existingProduct = await _context.Products
+                        .Include(p => p.ProductCategories)
+                        .SingleAsync(p => p.Id == updatedProduct.Id);
+                    existingProduct.Title = updatedProduct.Title;
+                    existingProduct.Price = updatedProduct.Price;
+                    existingProduct.Rating = updatedProduct.Rating;
+                    existingProduct.Description = updatedProduct.Description;
+
+                    foreach (ProductCategory linkToRemove in existingProduct.ProductCategories)
                     {
-                        Id = updatedProduct.Id,
-                        Title = updatedProduct.Title,
-                        Price = updatedProduct.Price,
-                        Rating = updatedProduct.Rating,
-                        Description = updatedProduct.Description
-                    };
+                        _context.Remove(linkToRemove);
+                    }
 
                     foreach (string cat in updatedProduct.Categories)
                     {
-                        ProductCategory prodcategory = new();
-                        prodcategory.Product = prd;
-                        prodcategory.Category = await _context.Categories.FirstOrDefaultAsync(c => c.Name == cat);
-                        
-                        pc.Add(prodcategory);
+                        var exisistingCategory = await _context.Categories.FirstOrDefaultAsync(c => c.Name == cat);
+
+                        existingProduct.ProductCategories.Add(new ProductCategory
+                        {
+                            Product = existingProduct,
+                            Category = exisistingCategory
+                        });
                     }
 
-                    prd.ProductCategories = pc;
-                    _context.Entry(prd).State = EntityState.Modified;
+                    //_context.Entry(existingProduct).State = EntityState.Modified;
                     await _context.SaveChangesAsync();
                 }
                 else

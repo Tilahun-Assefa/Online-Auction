@@ -58,13 +58,12 @@ namespace OnlineAuction.Services.ProductCategoryService
         public async Task<ServiceResponse<List<GetProductCategoryDto>>> GetAllProductCategories()
         {
             ServiceResponse<List<GetProductCategoryDto>> serviceResponse = new ServiceResponse<List<GetProductCategoryDto>>();
-            List<ProductCategory> dbProductCategories = await _context.ProductCategories
-            .Include(pc => pc.Category).ToListAsync();
+            List<ProductCategory> dbProductCategories = await _context.ProductCategories.Include(pc=> pc.Category).Include(pc=> pc.Product).ToListAsync();
 
             serviceResponse.Data = dbProductCategories.Select(pc => new GetProductCategoryDto()
             {
-                ProductId = pc.Product.Id,
-                CategoryId = pc.Category.Id
+                ProductName = pc.Product.Title,
+                CategoryName = pc.Category.Name
             }).ToList();
             return serviceResponse;
         }
