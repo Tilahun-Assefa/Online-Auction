@@ -20,9 +20,6 @@ namespace OnlineAuction.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            //Map Entity names to DB table names
-            modelBuilder.Entity<City>().ToTable("Cities");
-            modelBuilder.Entity<Country>().ToTable("Countries");
 
             modelBuilder.Entity<ProductCategory>().HasKey(pc => new { pc.ProductId, pc.CategoryId });
         }
@@ -33,9 +30,6 @@ namespace OnlineAuction.Data
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
-        public DbSet<City> Cities { get; set; }
-        public DbSet<Country> Countries { get; set; }
-
         #endregion Properties
     }
 }

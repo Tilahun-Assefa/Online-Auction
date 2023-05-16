@@ -32,6 +32,11 @@ namespace OnlineAuction.Dtos.Product
         public string Description { get; set; }
 
         ///<summary>
+        ///product image path
+        ///</summary>
+        public string ImgPath { get; set; }
+
+        ///<summary>
         ///Product Customer rating 
         ///</summary>
         public float Rating { get; set; }        

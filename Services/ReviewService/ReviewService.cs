@@ -19,7 +19,7 @@ namespace OnlineAuction.services.ReviewService
             _context = context;
         }
 
-        public async Task<ServiceResponse<List<GetReviewDto>>> GetAllReviews(int id)
+        public async Task<ServiceResponse<List<GetReviewDto>>> GetAllReviewsByProductId(int id)
         {
             ServiceResponse<List<GetReviewDto>> serviceResponse = new ServiceResponse<List<GetReviewDto>>();
             List<Review> reviews = await _context.Reviews.Include(r => r.Product)

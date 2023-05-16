@@ -23,7 +23,7 @@ namespace OnlineAuction.Controllers
         public async Task<IActionResult> GetProducts()
         {
             // return list of products            
-            return Ok(await _productService.GetAllProducts());
+            return Ok(await _productService.GetProductsList());
         }
 
         // GET: api/Product/5
@@ -37,6 +37,21 @@ namespace OnlineAuction.Controllers
                 return NotFound();
             }
             return Ok(serviceResponse);
+        }
+
+        // POST: api/Product
+        [HttpPost]
+        public async Task<ActionResult<ServiceResponse<Product>>> PostProduct(AddProductDto newProduct)
+        {
+            try
+            {
+                var serviceResponse = await _productService.CreateProduct(newProduct);
+                return CreatedAtAction("GetProduct", new { id = serviceResponse.Data.Id }, serviceResponse.Data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         // PUT: api/Product/5
@@ -55,22 +70,7 @@ namespace OnlineAuction.Controllers
                 return NotFound();
             }
             return NoContent();
-        }
-
-        // POST: api/Product
-        [HttpPost]
-        public async Task<ActionResult<ServiceResponse<Product>>> PostProduct(AddProductDto newProduct)
-        {
-            try
-            {
-                var serviceResponse = await _productService.PostProduct(newProduct);
-                return CreatedAtAction("GetProduct", new { id = serviceResponse.Data.Id }, serviceResponse.Data);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
+        }        
 
         // DELETE: api/Product/5
         [HttpDelete("{id}")]

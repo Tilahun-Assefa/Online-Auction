@@ -16,7 +16,7 @@ namespace OnlineAuction.Controllers
             _categoryService = categoryService;
         }
 
-        [HttpGet("GetCategories")]
+        [HttpGet]
         public async Task<IActionResult> Get() =>
             Ok(await _categoryService.GetAllCategories());
 
@@ -27,19 +27,19 @@ namespace OnlineAuction.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddProduct(Category newCategory)
+        public async Task<IActionResult> AddCategory(Category newCategory)
         {
             return Ok(await _categoryService.AddCategory(newCategory));
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateProduct(Category updatedCategory)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateCategory(Category updatedCategory)
         {
             return Ok(await _categoryService.UpdateCategory(updatedCategory));
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(int id)
+        public async Task<IActionResult> DeleteCategory(int id)
         {
             return Ok(await _categoryService.DeleteCategory(id));
         }

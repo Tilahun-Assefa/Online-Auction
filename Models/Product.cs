@@ -36,6 +36,11 @@ namespace OnlineAuction.Models
         public string Description { get; set; }
 
         ///<summary>
+        ///product image
+        ///</summary>
+        public string ImgPath { get; set; }
+
+        ///<summary>
         ///Product Customer rating 
         ///</summary>
         public float Rating { get; set; }

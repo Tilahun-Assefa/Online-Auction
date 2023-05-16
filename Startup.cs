@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using OnlineAuction.Data;
 using OnlineAuction.Models;
@@ -13,6 +16,7 @@ using OnlineAuction.services.ReviewService;
 using OnlineAuction.Services.CategoryService;
 using OnlineAuction.Services.ProductCategoryService;
 using OnlineAuction.Services.ProductService;
+using System.IO;
 
 namespace OnlineAuction
 {
@@ -28,9 +32,8 @@ namespace OnlineAuction
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //Add EntityFramework support for SqlServer
-            services.AddEntityFrameworkSqlServer();
-            //Add DataContext
+            //Add EntityFramework support for SqlServer services.
+            //AddEntityFrameworkSqlServer() DataContext
             services.AddDbContext<DataContext>(option => option.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
             services.AddScoped<IProductService, ProductService>();
@@ -47,6 +50,12 @@ namespace OnlineAuction
             });
             services.AddCors();
 
+            services.Configure<FormOptions>(o =>
+            {
+                o.ValueLengthLimit = int.MaxValue;
+                o.MultipartBodyLengthLimit = int.MaxValue;
+                o.MemoryBufferThreshold = int.MaxValue;
+            });
 
             //add asp.net core identity support
             services.AddDefaultIdentity<ApplicationUser>(options =>
@@ -74,7 +83,15 @@ namespace OnlineAuction
                 app.UseDeveloperExceptionPage();
             }
 
-            //app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();            
+
+            app.UseRouting();
+
+            //configuration to allow request from angular port 4200
+            app.UseCors(options =>
+            options.WithOrigins("http://localhost:4200", "http://localhost")
+            .AllowAnyMethod()
+            .AllowAnyHeader());
 
             //add .webmanifest MIME-type support
             FileExtensionContentTypeProvider provider = new FileExtensionContentTypeProvider();
@@ -101,13 +118,11 @@ namespace OnlineAuction
                 }
             });
 
-            app.UseRouting();
-
-            //configuration to allow request from angular port 4200
-            app.UseCors(options =>
-            options.WithOrigins("http://localhost:4200", "http://localhost")
-            .AllowAnyMethod()
-            .AllowAnyHeader());
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Resources")),
+                RequestPath = new PathString("/Resources")
+            });
 
             app.UseAuthentication();
             app.UseIdentityServer();

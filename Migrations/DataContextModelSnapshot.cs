@@ -17,7 +17,7 @@ namespace OnlineAuction.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.0")
+                .HasAnnotation("ProductVersion", "7.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -381,58 +381,6 @@ namespace OnlineAuction.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("OnlineAuction.Models.City", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CountryId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Lat")
-                        .HasColumnType("decimal(7,4)");
-
-                    b.Property<decimal>("Lon")
-                        .HasColumnType("decimal(7,4)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name_ASCII")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CountryId");
-
-                    b.ToTable("Cities", (string)null);
-                });
-
-            modelBuilder.Entity("OnlineAuction.Models.Country", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ISO2")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ISO3")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Countries", (string)null);
-                });
-
             modelBuilder.Entity("OnlineAuction.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -442,6 +390,9 @@ namespace OnlineAuction.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImgPath")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<float>("Price")
@@ -554,17 +505,6 @@ namespace OnlineAuction.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("OnlineAuction.Models.City", b =>
-                {
-                    b.HasOne("OnlineAuction.Models.Country", "Country")
-                        .WithMany("Cities")
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Country");
-                });
-
             modelBuilder.Entity("OnlineAuction.Models.ProductCategory", b =>
                 {
                     b.HasOne("OnlineAuction.Models.Category", "Category")
@@ -598,11 +538,6 @@ namespace OnlineAuction.Migrations
             modelBuilder.Entity("OnlineAuction.Models.Category", b =>
                 {
                     b.Navigation("ProductCategories");
-                });
-
-            modelBuilder.Entity("OnlineAuction.Models.Country", b =>
-                {
-                    b.Navigation("Cities");
                 });
 
             modelBuilder.Entity("OnlineAuction.Models.Product", b =>

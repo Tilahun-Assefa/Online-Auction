@@ -19,7 +19,7 @@ namespace OnlineAuction.Controllers
         [HttpGet("GetAll/{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            return Ok(await _reviewService.GetAllReviews(id));
+            return Ok(await _reviewService.GetAllReviewsByProductId(id));
         }        
 
         [HttpGet("{id}")]
