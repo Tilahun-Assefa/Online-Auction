@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using OnlineAuction.Models;
 using OnlineAuction.Dtos.Product;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
 
 namespace OnlineAuction.Services.ProductService
 {
@@ -10,7 +9,7 @@ namespace OnlineAuction.Services.ProductService
     {
          Task<ServiceResponse<IEnumerable<GetProductDto>>> GetProductsList();
          Task<ServiceResponse<ProductDto>> GetProductById(int id);
-         Task<ServiceResponse<GetProductDto>> CreateProduct(AddProductDto newProduct);
+         Task<ServiceResponse<GetProductDto>> CreateProduct(Product newProduct);
          Task<bool> UpdateProduct(UpdateProductDto updatedProduct);
          Task<bool> DeleteProduct(int id);        
     

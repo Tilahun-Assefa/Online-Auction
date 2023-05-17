@@ -6,11 +6,7 @@ using OnlineAuction.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using OnlineAuction.Dtos.Category;
 using OnlineAuction.Dtos.Review;
-using System.Diagnostics.Metrics;
 
 namespace OnlineAuction.Services.ProductService
 {
@@ -91,7 +87,7 @@ namespace OnlineAuction.Services.ProductService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetProductDto>> CreateProduct(AddProductDto newProduct)
+        public async Task<ServiceResponse<GetProductDto>> CreateProduct(Product newProduct)
         {
             ServiceResponse<GetProductDto> serviceResponse = new();
 
@@ -100,39 +96,18 @@ namespace OnlineAuction.Services.ProductService
                 Product searchproduct = await _context.Products.FirstOrDefaultAsync(p => p.Title == newProduct.Title);
 
                 if (searchproduct == null)
-                {
-                    Product prd = new()
-                    {
-                        Title = newProduct.Title,
-                        Price = newProduct.Price,
-                        Description = newProduct.Description,
-                        ImgPath = newProduct.ImgPath,
-                        Rating = newProduct.Rating,
-                        ProductCategories= new List<ProductCategory>()
-                    };                   
-
-                    foreach (string cat in newProduct.Categories)
-                    {
-                        var category = await _context.Categories.FirstOrDefaultAsync(c => c.Name == cat);
-
-                        prd.ProductCategories.Add(new ProductCategory
-                        {
-                            Product = prd,
-                            Category = category
-                        });
-                    }
-
-                    _context.Products.Add(prd);
+                {     
+                    _context.Products.Add(newProduct);
                     await _context.SaveChangesAsync();
 
                     serviceResponse.Data = new GetProductDto()
                     {
-                        Id = prd.Id,
-                        Description = prd.Description,
-                        ImgPath= prd.ImgPath,
-                        Price = prd.Price,
-                        Rating = prd.Rating,
-                        Title = prd.Title
+                        Id = newProduct.Id,
+                        Description = newProduct.Description,
+                        ImgPath= newProduct.ImgPath,
+                        Price = newProduct.Price,
+                        Rating = newProduct.Rating,
+                        Title = newProduct.Title
                     };
                     serviceResponse.Success = true;
                     serviceResponse.Message = "Added succesfully";
@@ -173,12 +148,10 @@ namespace OnlineAuction.Services.ProductService
 
                     foreach (string cat in updatedProduct.Categories)
                     {
-                        var exisistingCategory = await _context.Categories.FirstOrDefaultAsync(c => c.Name == cat);
-
                         existingProduct.ProductCategories.Add(new ProductCategory
                         {
                             Product = existingProduct,
-                            Category = exisistingCategory
+                            Category = new() { Name= cat }
                         });
                     }
 
@@ -208,14 +181,14 @@ namespace OnlineAuction.Services.ProductService
                 }
                 _context.Products.Remove(product);
                 await _context.SaveChangesAsync();
+                return true;
             }
             catch (Exception)
             {
                 return false;
-            }
-            return true;
+            }            
         }
-        private bool ProductExists(int id)
+        public bool ProductExists(int id)
         {
             return _context.Products.Any(e => e.Id == id);
         }

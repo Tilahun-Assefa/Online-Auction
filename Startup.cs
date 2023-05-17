@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,6 +18,7 @@ using OnlineAuction.Services.CategoryService;
 using OnlineAuction.Services.ProductCategoryService;
 using OnlineAuction.Services.ProductService;
 using System.IO;
+using System.Reflection;
 
 namespace OnlineAuction
 {
@@ -40,6 +42,8 @@ namespace OnlineAuction
             services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
+
             services.AddControllers().AddJsonOptions(options =>
             {
                 //set this option to true to indent the JSON output

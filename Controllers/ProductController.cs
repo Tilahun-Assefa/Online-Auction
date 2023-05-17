@@ -1,10 +1,11 @@
 using System;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using OnlineAuction.Dtos.Product;
+using OnlineAuction.Features.Products.Commands;
+using OnlineAuction.Features.Products.Queries;
 using OnlineAuction.Models;
-using OnlineAuction.Services.ProductService;
 
 namespace OnlineAuction.Controllers
 {
@@ -12,10 +13,11 @@ namespace OnlineAuction.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly IProductService _productService;
-        public ProductController(IProductService productService)
+        private readonly IMediator _mediator;
+
+        public ProductController(IMediator mediator)
         {
-            _productService = productService;
+            _mediator = mediator;
         }
 
         // GET: api/Product        
@@ -23,14 +25,14 @@ namespace OnlineAuction.Controllers
         public async Task<IActionResult> GetProducts()
         {
             // return list of products            
-            return Ok(await _productService.GetProductsList());
+            return Ok(await _mediator.Send(new GetAllProductsQuery()));
         }
 
         // GET: api/Product/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProduct(int id)
         {
-            var serviceResponse = await _productService.GetProductById(id);
+            var serviceResponse = await _mediator.Send(new GetProductByIdQuery() { Id = id });
 
             if (serviceResponse.Success == false)
             {
@@ -41,11 +43,12 @@ namespace OnlineAuction.Controllers
 
         // POST: api/Product
         [HttpPost]
-        public async Task<ActionResult<ServiceResponse<Product>>> PostProduct(AddProductDto newProduct)
+        //[ValidateAntiForgeryToken]
+        public async Task<ActionResult<ServiceResponse<GetProductDto>>> PostProduct(CreateProductCommand command)
         {
             try
             {
-                var serviceResponse = await _productService.CreateProduct(newProduct);
+                var serviceResponse = await _mediator.Send(command);
                 return CreatedAtAction("GetProduct", new { id = serviceResponse.Data.Id }, serviceResponse.Data);
             }
             catch (Exception)
@@ -56,33 +59,38 @@ namespace OnlineAuction.Controllers
 
         // PUT: api/Product/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, UpdateProductDto updatedProduct)
+        public async Task<IActionResult> PutProduct(int id, UpdateProductCommand command)
         {
-            if (id != updatedProduct.Id)
+            if (id != command.Id)
             {
                 return BadRequest();
             }
 
-            var check = await _productService.UpdateProduct(updatedProduct);
-
-            if (!check)
+            try
+            {
+                await _mediator.Send(command);
+                return NoContent();
+            }
+            catch (Exception ex)
             {
                 return NotFound();
             }
-            return NoContent();
-        }        
+        }
 
         // DELETE: api/Product/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-            var check = await _productService.DeleteProduct(id);
-            if (!check)
+            try
+            {
+                await _mediator.Send(new DeleteProductCommand() { Id = id });
+                return NoContent();
+            }
+            catch (Exception ex)
             {
                 return NotFound();
             }
-
-            return NoContent();
+            
         }
     }
 }
