@@ -31,11 +31,10 @@ namespace OnlineAuction.Features.Products.Commands
             {
                 Product product = new()
                 {
-                    Title = command.Title,
+                    Name = command.Title,
                     Price = command.Price,
                     Description = command.Description,
                     ImgPath = command.ImgPath,
-                    Rating = command.Rating,
                     ProductCategories = new List<ProductCategory>()
                 };
 

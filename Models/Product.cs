@@ -8,10 +8,6 @@ namespace OnlineAuction.Models
 {
     public class Product
     {
-        #region constructor
-        public Product() { }
-        #endregion
-
         #region properties
         ///<summary>
         ///The unique id and primary key for this city
@@ -23,7 +19,7 @@ namespace OnlineAuction.Models
         ///<summary>
         ///Product name(in UTF8 format)
         ///</summary>
-        public string Title { get; set; }
+        public string Name { get; set; }
 
         ///<summary>
         ///Product price 
@@ -36,14 +32,9 @@ namespace OnlineAuction.Models
         public string Description { get; set; }
 
         ///<summary>
-        ///product image
+        ///product image Url
         ///</summary>
         public string ImgPath { get; set; }
-
-        ///<summary>
-        ///Product Customer rating 
-        ///</summary>
-        public float Rating { get; set; }
         #endregion
 
         #region Navigation Properties

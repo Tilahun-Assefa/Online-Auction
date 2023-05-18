@@ -2,11 +2,6 @@ namespace OnlineAuction.Dtos.ProductCategory
 {
     public class AddProductCategoryDto
     {
-
-        #region constructor
-        public AddProductCategoryDto() { }
-        #endregion
-
         #region properties
         ///<summary>
         ///The product id and part of primary key for this product-category

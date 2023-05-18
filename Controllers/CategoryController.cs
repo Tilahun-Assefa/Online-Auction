@@ -27,13 +27,13 @@ namespace OnlineAuction.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCategory(Category newCategory)
+        public async Task<IActionResult> AddCategory(CategoryDto newCategory)
         {
             return Ok(await _categoryService.AddCategory(newCategory));
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCategory(Category updatedCategory)
+        public async Task<IActionResult> UpdateCategory(UpdateCategoryDto updatedCategory)
         {
             return Ok(await _categoryService.UpdateCategory(updatedCategory));
         }

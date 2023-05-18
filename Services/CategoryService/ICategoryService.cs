@@ -7,10 +7,10 @@ namespace OnlineAuction.Services.CategoryService
 {
     public interface ICategoryService
     {
-         Task<ServiceResponse<List<GetCategoryDto>>> GetAllCategories();
-         Task<ServiceResponse<GetCategoryDto>> GetCategoryById(int id);
-         Task<ServiceResponse<GetCategoryDto>> AddCategory(Category newCategory);
-         Task<bool> UpdateCategory(Category updatedCategory);
+         Task<ServiceResponse<List<CategoryDto>>> GetAllCategories();
+         Task<ServiceResponse<CategoryDto>> GetCategoryById(int id);
+         Task<ServiceResponse<CategoryDto>> AddCategory(CategoryDto newCategory);
+         Task<bool> UpdateCategory(UpdateCategoryDto updatedCategory);
          Task<bool> DeleteCategory(int id); 
     }
 }

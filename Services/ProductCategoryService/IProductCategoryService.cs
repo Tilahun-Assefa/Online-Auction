@@ -8,7 +8,6 @@ namespace OnlineAuction.Services.ProductCategoryService
 {
     public interface IProductCategoryService
     {
-         Task<ServiceResponse<GetProductDto>> AddProductCategory(AddProductCategoryDto newProductCategory);
          Task<ServiceResponse<List<GetProductCategoryDto>>> GetAllProductCategories();
     }
 }

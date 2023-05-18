@@ -5,16 +5,12 @@ namespace OnlineAuction.Dtos.Product
 {
     public class AddProductDto
     {
-        #region constructor
-        public AddProductDto() { }
-        #endregion
-
         #region properties
 
         ///<summary>
         ///Product name(in UTF8 format)
         ///</summary>
-        public string Title { get; set; }
+        public string Name { get; set; }
 
         ///<summary>
         ///Product price 
@@ -30,11 +26,6 @@ namespace OnlineAuction.Dtos.Product
         ///product image path
         ///</summary>
         public string ImgPath { get; set; }        
-
-        ///<summary>
-        ///Product Customer rating 
-        ///</summary>
-        public float Rating { get; set; }
 
         ///<summary>
         ///Array of categories

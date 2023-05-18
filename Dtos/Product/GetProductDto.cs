@@ -6,10 +6,6 @@ namespace OnlineAuction.Dtos.Product
 {
     public class GetProductDto
     {
-        #region constructor
-        public GetProductDto() { }
-        #endregion
-
         #region properties
         ///<summary>
         ///The unique id and primary key for this product
@@ -19,7 +15,7 @@ namespace OnlineAuction.Dtos.Product
         ///<summary>
         ///Product name(in UTF8 format)
         ///</summary>
-        public string Title { get; set; }
+        public string Name { get; set; }
 
         ///<summary>
         ///Product price 
@@ -37,9 +33,14 @@ namespace OnlineAuction.Dtos.Product
         public string ImgPath { get; set; }
 
         ///<summary>
-        ///Product Customer rating 
-        ///</summary>
-        public float Rating { get; set; }        
+        ///List of categories
+        ///</summary>             
+        public List<string> Categories { set; get; }
+
+        ///<summary>
+        ///List of reviews
+        ///</summary>  
+        public List<ReviewDto> Reviews { get; set; }
         #endregion
     }
 }

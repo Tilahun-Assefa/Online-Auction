@@ -13,12 +13,14 @@ namespace OnlineAuction
         public AutoMapperProfile()
         {
             CreateMap<AddProductDto, Product>();
-            CreateMap<Product, UpdateProductDto>()
+            CreateMap<Product, GetProductDto>()
             .ForMember(dto => dto.Categories, x => x.MapFrom(p => p.ProductCategories.Select(pc => pc.Category)));
-            CreateMap<Review, GetReviewDto>();
-            CreateMap<AddReviewDto, Review>();
-            CreateMap<UpdateReviewDto, Review>();
-            CreateMap<Category, GetCategoryDto>();
+            CreateMap<UpdateProductDto, Product>();
+            CreateMap<Review, ReviewDto>();
+            CreateMap<ReviewDto, Review>();
+            CreateMap<ReviewDto, UpdateReviewDto>();
+            CreateMap<UpdateReviewDto, ReviewDto>();
+            CreateMap<Category, CategoryDto>();
             CreateMap<ProductCategory, GetProductCategoryDto>();
         }
 

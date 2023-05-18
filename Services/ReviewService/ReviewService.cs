@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using OnlineAuction.Data;
 using OnlineAuction.Dtos.Product;
+using OnlineAuction.Dtos.ProductCategory;
 using OnlineAuction.Dtos.Review;
 using OnlineAuction.Models;
 
@@ -14,63 +15,31 @@ namespace OnlineAuction.services.ReviewService
     public class ReviewService : IReviewService
     {
         private readonly DataContext _context;
-        public ReviewService(DataContext context)
+        private readonly IMapper _mapper;
+        public ReviewService(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<ServiceResponse<List<GetReviewDto>>> GetAllReviewsByProductId(int id)
+        public async Task<ServiceResponse<List<ReviewDto>>> GetAllReviewsByProductId(int id)
         {
-            ServiceResponse<List<GetReviewDto>> serviceResponse = new ServiceResponse<List<GetReviewDto>>();
+            ServiceResponse<List<ReviewDto>> serviceResponse = new ServiceResponse<List<ReviewDto>>();
             List<Review> reviews = await _context.Reviews.Include(r => r.Product)
                 .Where(r => r.Product.Id == id).ToListAsync();
 
-            serviceResponse.Data = reviews.Select(r => new GetReviewDto()
-            {
-                TimeStamp = r.TimeStamp,
-                User = r.User,
-                Comment = r.Comment,
-                Rating = r.Rating
-            }).ToList();
+            serviceResponse.Data = reviews.Select(r => _mapper.Map<ReviewDto>(r)).ToList();
 
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetReviewDto>> GetReviewByReviewId(int id)
+        
+        public async Task<ServiceResponse<ReviewDto>> AddReview(UpdateReviewDto newReview)
         {
-            ServiceResponse<GetReviewDto> serviceResponse = new ServiceResponse<GetReviewDto>();
+            ServiceResponse<ReviewDto> serviceResponse = new ServiceResponse<ReviewDto>();
             try
             {
-                Review review = await _context.Reviews.FirstOrDefaultAsync(r => r.Id == id);
-                if (review != null)
-                {
-                    serviceResponse.Data = new GetReviewDto()
-                    {
-                        TimeStamp = review.TimeStamp,
-                        User = review.User,
-                        Comment = review.Comment,
-                        Rating = review.Rating
-                    };
-                }
-                else
-                {
-                    serviceResponse.Success = false;
-                    serviceResponse.Message = "Review not found.";
-                }
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.Success = false;
-                serviceResponse.Message = ex.Message;
-            }
-            return serviceResponse;
-        }
-        public async Task<ServiceResponse<GetReviewDto>> AddReview(Review newReview)
-        {
-            ServiceResponse<GetReviewDto> serviceResponse = new ServiceResponse<GetReviewDto>();
-            try
-            {
-                _context.Reviews.Add(newReview);
+                _context.Reviews.Add(_mapper.Map<Review>(newReview));
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -78,6 +47,9 @@ namespace OnlineAuction.services.ReviewService
                 serviceResponse.Success = false;
                 serviceResponse.Message = "unsuccesful";
             }
+            serviceResponse.Success = true;
+            serviceResponse.Message = "Product added succesfully";
+            serviceResponse.Data = _mapper.Map<ReviewDto>(newReview) ;
 
             return serviceResponse;
         }
@@ -102,20 +74,6 @@ namespace OnlineAuction.services.ReviewService
                 return false;
             }
             return true;
-        }
-
-        public async Task<bool> UpdateReview(Review updatedReview)
-        {
-            _context.Entry(updatedReview).State = EntityState.Modified;
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                return false;
-            }
-            return true;
-        }
+        }        
     }
 }

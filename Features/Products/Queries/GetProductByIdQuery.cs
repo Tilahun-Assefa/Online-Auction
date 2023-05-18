@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace OnlineAuction.Features.Products.Queries
 {
-    public class GetProductByIdQuery : IRequest<ServiceResponse<ProductDto>>
+    public class GetProductByIdQuery : IRequest<ServiceResponse<GetProductDto>>
     {
         public int Id { get; set; }
 
-        public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, ServiceResponse<ProductDto>>
+        public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, ServiceResponse<GetProductDto>>
         {
             private readonly IProductService _productService;
 
@@ -20,7 +20,7 @@ namespace OnlineAuction.Features.Products.Queries
                 _productService = productService;
             }
 
-            public async Task<ServiceResponse<ProductDto>> Handle(GetProductByIdQuery query, CancellationToken cancellationToken)
+            public async Task<ServiceResponse<GetProductDto>> Handle(GetProductByIdQuery query, CancellationToken cancellationToken)
             {
                 return await _productService.GetProductById(query.Id);
             }

@@ -6,27 +6,27 @@ using OnlineAuction.Data;
 using OnlineAuction.Dtos.Category;
 using OnlineAuction.Models;
 using System;
+using AutoMapper;
 
 namespace OnlineAuction.Services.CategoryService
 {
     public class CategoryService : ICategoryService
     {
         private readonly DataContext _context;
-        public CategoryService(DataContext context)
+        private readonly IMapper _mapper;
+        public CategoryService(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<ServiceResponse<List<GetCategoryDto>>> GetAllCategories()
+        public async Task<ServiceResponse<List<CategoryDto>>> GetAllCategories()
         {
-            ServiceResponse<List<GetCategoryDto>> serviceResponse = new ServiceResponse<List<GetCategoryDto>>();
+            ServiceResponse<List<CategoryDto>> serviceResponse = new ServiceResponse<List<CategoryDto>>();
             try
             {
                 List<Category> categories = await _context.Categories.ToListAsync();
-                serviceResponse.Data = categories.Select(c => new GetCategoryDto()
-                {
-                    Name = c.Name
-                }).ToList();
+                serviceResponse.Data = categories.Select(c => _mapper.Map<CategoryDto>(c)).ToList();
             }
             catch (Exception ex)
             {
@@ -36,16 +36,13 @@ namespace OnlineAuction.Services.CategoryService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetCategoryDto>> GetCategoryById(int id)
+        public async Task<ServiceResponse<CategoryDto>> GetCategoryById(int id)
         {
-            ServiceResponse<GetCategoryDto> serviceResponse = new ServiceResponse<GetCategoryDto>();
+            ServiceResponse<CategoryDto> serviceResponse = new ServiceResponse<CategoryDto>();
             try
             {
                 Category category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
-                serviceResponse.Data = new GetCategoryDto()
-                {
-                    Name = category.Name
-                };
+                serviceResponse.Data = _mapper.Map<CategoryDto>(category);
             }
             catch (Exception ex)
             {
@@ -55,15 +52,15 @@ namespace OnlineAuction.Services.CategoryService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetCategoryDto>> AddCategory(Category newCategory)
+        public async Task<ServiceResponse<CategoryDto>> AddCategory(CategoryDto newCategory)
         {
-            ServiceResponse<GetCategoryDto> serviceResponse = new ServiceResponse<GetCategoryDto>();
+            ServiceResponse<CategoryDto> serviceResponse = new ServiceResponse<CategoryDto>();
             try
             {
                 Category searchCat = await _context.Categories.FirstOrDefaultAsync(c => c.Name == newCategory.Name);
                 if (searchCat == null)
                 {
-                    await _context.Categories.AddAsync(newCategory);
+                    await _context.Categories.AddAsync(_mapper.Map<Category>(newCategory) );
                     await _context.SaveChangesAsync();
                 }
                 else
@@ -80,7 +77,7 @@ namespace OnlineAuction.Services.CategoryService
             return serviceResponse;
         }
         
-        public async Task<bool> UpdateCategory(Category updatedCategory)
+        public async Task<bool> UpdateCategory(UpdateCategoryDto updatedCategory)
         {
             _context.Entry(updatedCategory).State = EntityState.Modified;
 

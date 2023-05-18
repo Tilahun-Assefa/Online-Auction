@@ -5,12 +5,7 @@ using System.ComponentModel.DataAnnotations;
 namespace OnlineAuction.Models
 {
     public class Category
-    {       
-
-        #region constructor
-        public Category() { }
-        #endregion
-
+    {   
         #region properties
         ///<summary>
         ///The unique id and primary key for this city

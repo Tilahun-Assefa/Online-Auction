@@ -20,11 +20,7 @@ namespace OnlineAuction.Controllers
         {
             // throw new System.Exception();            
             return Ok(await _productcategoryService.GetAllProductCategories());
-        }   
-        
-        [HttpPost]
-        public async Task<IActionResult> AddProductCategory(AddProductCategoryDto newProductCategory){
-            return Ok(await _productcategoryService.AddProductCategory(newProductCategory));
-        }
+        }       
+       
     }
 }

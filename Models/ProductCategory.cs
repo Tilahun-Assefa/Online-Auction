@@ -5,11 +5,6 @@ namespace OnlineAuction.Models
 {
     public class ProductCategory
     {
-        
-        #region constructor
-        public ProductCategory() { }
-        #endregion
-
         #region properties
         ///<summary>
         ///The unique id and primary key for this productcategory

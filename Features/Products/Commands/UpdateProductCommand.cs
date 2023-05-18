@@ -34,11 +34,10 @@ namespace OnlineAuction.Features.Products.Commands
                 UpdateProductDto dto = new()
                 {
                     Id = command.Id,
-                    Title = command.Title,
+                    Name = command.Title,
                     Price = command.Price,
                     Description = command.Description,
                     ImgPath = command.ImgPath,
-                    Rating = command.Rating,
                     Categories = command.Categories
                 };
 

@@ -42,6 +42,7 @@ namespace OnlineAuction
             services.AddScoped<IReviewService, ReviewService>();
             services.AddScoped<IProductCategoryService, ProductCategoryService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 
             services.AddControllers().AddJsonOptions(options =>

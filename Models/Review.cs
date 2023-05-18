@@ -6,10 +6,6 @@ namespace OnlineAuction.Models
 {
     public class Review
     {
-        #region constructor
-        public Review() { }
-        #endregion
-
         #region properties
         ///<summary>
         ///The unique id and primary key for this city
@@ -26,7 +22,7 @@ namespace OnlineAuction.Models
         ///<summary>
         ///User who reviews the product
         ///</summary>
-        public string User { get; set; }
+        public string UserName { get; set; }
 
         ///<summary>
         ///Customer's ratingof the product

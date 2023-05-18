@@ -1,12 +1,10 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OnlineAuction.Dtos.Review
 {
-    public class GetReviewDto
-    {
-        #region constructor
-        public GetReviewDto() { }
-        #endregion
+    public class ReviewDto
+    {        
 
         #region properties
         ///<summary>
@@ -17,7 +15,7 @@ namespace OnlineAuction.Dtos.Review
         ///<summary>
         ///User who reviews the product
         ///</summary>
-        public string User { get; set; }
+        public string UserName { get; set; }
 
         ///<summary>
         ///Customer's ratingof the product
@@ -28,6 +26,11 @@ namespace OnlineAuction.Dtos.Review
         ///Comment given for this product
         ///</summary>
         public string Comment { get; set; }
+
+        ///<summary>
+        ///Product id (foreign key)
+        ///</summary>       
+        public int ProductId { get; set; }
 
         #endregion
     }
