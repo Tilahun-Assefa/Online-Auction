@@ -23,7 +23,7 @@ namespace OnlineAuction.Controllers
         }          
 
         [HttpPost]
-        public async Task<IActionResult> AddReview(UpdateReviewDto newReview)
+        public async Task<IActionResult> AddReview(ReviewDto newReview)
         {
             return Ok(await _reviewService.AddReview(newReview));
         }        

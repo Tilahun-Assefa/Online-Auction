@@ -17,6 +17,7 @@ namespace OnlineAuction
             .ForMember(dto => dto.Categories, x => x.MapFrom(p => p.ProductCategories.Select(pc => pc.Category)));
             CreateMap<UpdateProductDto, Product>();
             CreateMap<Review, ReviewDto>();
+            CreateMap<Review, UpdateReviewDto>();
             CreateMap<ReviewDto, Review>();
             CreateMap<ReviewDto, UpdateReviewDto>();
             CreateMap<UpdateReviewDto, ReviewDto>();

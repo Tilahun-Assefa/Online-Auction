@@ -22,19 +22,19 @@ namespace OnlineAuction.services.ReviewService
             _mapper = mapper;
         }
 
-        public async Task<ServiceResponse<List<ReviewDto>>> GetAllReviewsByProductId(int id)
+        public async Task<ServiceResponse<List<UpdateReviewDto>>> GetAllReviewsByProductId(int id)
         {
-            ServiceResponse<List<ReviewDto>> serviceResponse = new ServiceResponse<List<ReviewDto>>();
+            ServiceResponse<List<UpdateReviewDto>> serviceResponse = new ServiceResponse<List<UpdateReviewDto>>();
             List<Review> reviews = await _context.Reviews.Include(r => r.Product)
                 .Where(r => r.Product.Id == id).ToListAsync();
 
-            serviceResponse.Data = reviews.Select(r => _mapper.Map<ReviewDto>(r)).ToList();
+            serviceResponse.Data = reviews.Select(r => _mapper.Map<UpdateReviewDto>(r)).ToList();
 
             return serviceResponse;
         }
 
         
-        public async Task<ServiceResponse<ReviewDto>> AddReview(UpdateReviewDto newReview)
+        public async Task<ServiceResponse<ReviewDto>> AddReview(ReviewDto newReview)
         {
             ServiceResponse<ReviewDto> serviceResponse = new ServiceResponse<ReviewDto>();
             try

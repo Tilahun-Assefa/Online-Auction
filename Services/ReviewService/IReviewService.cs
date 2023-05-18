@@ -7,8 +7,8 @@ namespace OnlineAuction.services.ReviewService
 {
     public interface IReviewService
     {
-        Task<ServiceResponse<List<ReviewDto>>> GetAllReviewsByProductId(int id);
-        Task<ServiceResponse<ReviewDto>> AddReview(UpdateReviewDto newReview);
+        Task<ServiceResponse<List<UpdateReviewDto>>> GetAllReviewsByProductId(int id);
+        Task<ServiceResponse<ReviewDto>> AddReview(ReviewDto newReview);
         Task<bool> DeleteReview(int id);
     }
 }
