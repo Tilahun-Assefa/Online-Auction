@@ -1,6 +1,3 @@
-using OnlineAuction.Dtos.Category;
-using OnlineAuction.Dtos.Review;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 

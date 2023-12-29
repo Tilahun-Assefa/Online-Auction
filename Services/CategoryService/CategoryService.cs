@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using OnlineAuction.Data;
-using OnlineAuction.Dtos.Category;
+using OnlineAuction.Dtos.CategoryDtos;
 using OnlineAuction.Models;
 using System;
 using AutoMapper;

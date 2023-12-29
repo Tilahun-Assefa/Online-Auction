@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using OnlineAuction.Models;
-using OnlineAuction.Dtos.Product;
+using OnlineAuction.Dtos.ProductDtos;
 using System.Collections.Generic;
 
 namespace OnlineAuction.Services.ProductService

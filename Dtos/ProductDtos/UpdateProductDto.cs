@@ -1,6 +1,8 @@
-namespace OnlineAuction.Dtos.Product
+using OnlineAuction.Models;
+
+namespace OnlineAuction.Dtos.ProductDtos
 {
-    public class UpdateProductDto
+    public class UpdateProductDto : IMapFrom<Product>
     {
         #region properties
         ///<summary>

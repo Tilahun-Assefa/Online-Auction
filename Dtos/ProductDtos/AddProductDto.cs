@@ -1,9 +1,8 @@
-using System.Collections.Generic;
-using OnlineAuction.Dtos.Category;
+using OnlineAuction.Models;
 
-namespace OnlineAuction.Dtos.Product
+namespace OnlineAuction.Dtos.ProductDtos
 {
-    public class AddProductDto
+    public class AddProductDto : IMapFrom<Product>
     {
         #region properties
 

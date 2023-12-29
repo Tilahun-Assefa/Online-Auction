@@ -1,12 +1,16 @@
+using OnlineAuction.Models;
 using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace OnlineAuction.Dtos.Review
+namespace OnlineAuction.Dtos.ReviewDtos
 {
-    public class ReviewDto
-    {        
-
+    public class UpdateReviewDto : IMapFrom<Review>
+    {
         #region properties
+        ///<summary>
+        ///The unique id and primary key for this city
+        ///</summary>        
+        public int Id { get; set; }
+
         ///<summary>
         ///The time instance the review was done 
         ///</summary>
@@ -18,7 +22,7 @@ namespace OnlineAuction.Dtos.Review
         public string UserName { get; set; }
 
         ///<summary>
-        ///Customer's ratingof the product
+        ///Customer's rating of the product
         ///</summary>
         public float Rating { get; set; }
 

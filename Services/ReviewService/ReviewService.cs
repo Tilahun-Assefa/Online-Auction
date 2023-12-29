@@ -5,9 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using OnlineAuction.Data;
-using OnlineAuction.Dtos.Product;
-using OnlineAuction.Dtos.ProductCategory;
-using OnlineAuction.Dtos.Review;
+using OnlineAuction.Dtos.ReviewDtos;
 using OnlineAuction.Models;
 
 namespace OnlineAuction.services.ReviewService

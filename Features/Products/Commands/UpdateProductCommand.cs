@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using OnlineAuction.Dtos.Product;
+using OnlineAuction.Dtos.ProductDtos;
 using OnlineAuction.Services.ProductService;
 using System.Threading;
 using System.Threading.Tasks;

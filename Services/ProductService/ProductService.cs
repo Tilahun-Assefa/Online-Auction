@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using OnlineAuction.Dtos.Product;
+using OnlineAuction.Dtos.ProductDtos;
 using OnlineAuction.Models;
 using OnlineAuction.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System;
-using OnlineAuction.Dtos.Review;
+using OnlineAuction.Dtos.ReviewDtos;
 using AutoMapper;
-using OnlineAuction.Dtos.ProductCategory;
 
 namespace OnlineAuction.Services.ProductService
 {

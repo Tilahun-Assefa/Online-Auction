@@ -1,10 +1,11 @@
 using System.Collections.Generic;
-using OnlineAuction.Dtos.Category;
-using OnlineAuction.Dtos.Review;
+using AutoMapper;
+using OnlineAuction.Dtos.ReviewDtos;
+using OnlineAuction.Models;
 
-namespace OnlineAuction.Dtos.Product
+namespace OnlineAuction.Dtos.ProductDtos
 {
-    public class GetProductDto
+    public class GetProductDto : IMapFrom<Product>
     {
         #region properties
         ///<summary>
@@ -42,5 +43,11 @@ namespace OnlineAuction.Dtos.Product
         ///</summary>  
         public List<ReviewDto> Reviews { get; set; }
         #endregion
+
+        public void Mapping(Profile profile)
+        {
+            var c = profile.CreateMap<Product, GetProductDto>()
+                .ForMember(d => d.ImgPath, opt => opt.NullSubstitute("N/A"));
+        }
     }
 }

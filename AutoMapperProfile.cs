@@ -1,29 +1,33 @@
 using System.Linq;
 using AutoMapper;
-using OnlineAuction.Dtos.Category;
-using OnlineAuction.Dtos.Product;
-using OnlineAuction.Dtos.Review;
-using OnlineAuction.Dtos.ProductCategory;
-using OnlineAuction.Models;
+using System.Reflection;
+using System;
 
 namespace OnlineAuction
 {
-    public class AutoMapperProfile : Profile
+    public class MappingProfile : Profile
     {
-        public AutoMapperProfile()
+        public MappingProfile()
         {
-            CreateMap<AddProductDto, Product>();
-            CreateMap<Product, GetProductDto>()
-            .ForMember(dto => dto.Categories, x => x.MapFrom(p => p.ProductCategories.Select(pc => pc.Category)));
-            CreateMap<UpdateProductDto, Product>();
-            CreateMap<Review, ReviewDto>();
-            CreateMap<Review, UpdateReviewDto>();
-            CreateMap<ReviewDto, Review>();
-            CreateMap<ReviewDto, UpdateReviewDto>();
-            CreateMap<UpdateReviewDto, ReviewDto>();
-            CreateMap<Category, CategoryDto>();
-            CreateMap<ProductCategory, GetProductCategoryDto>();
+            ApplyMappingsFromAssembly(Assembly.GetExecutingAssembly());
         }
 
+        private void ApplyMappingsFromAssembly(Assembly assembly)
+        {
+            var types = assembly.GetExportedTypes()
+                .Where(t => t.GetInterfaces().Any(i =>
+                    i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IMapFrom<>)))
+                .ToList();
+
+            foreach (var type in types)
+            {
+                var instance = Activator.CreateInstance(type);
+
+                var methodInfo = type.GetMethod("Mapping") ??
+                                 type.GetInterface("IMapFrom`1").GetMethod("Mapping");
+
+                methodInfo?.Invoke(instance, new object[] { this });
+            }
+        }
     }
 }

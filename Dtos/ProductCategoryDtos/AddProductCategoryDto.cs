@@ -1,6 +1,8 @@
-namespace OnlineAuction.Dtos.ProductCategory
+using OnlineAuction.Models;
+
+namespace OnlineAuction.Dtos.ProductCategoryDtos
 {
-    public class AddProductCategoryDto
+    public class AddProductCategoryDto : IMapFrom<ProductCategory>
     {
         #region properties
         ///<summary>

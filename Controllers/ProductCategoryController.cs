@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using OnlineAuction.Dtos.ProductCategory;
 using OnlineAuction.Services.ProductCategoryService;
 
 namespace OnlineAuction.Controllers

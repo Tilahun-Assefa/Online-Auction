@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using OnlineAuction.Dtos.Product;
+using OnlineAuction.Dtos.ProductDtos;
 using OnlineAuction.Features.Products.Commands;
 using OnlineAuction.Features.Products.Queries;
 using OnlineAuction.Models;

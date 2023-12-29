@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using OnlineAuction.Dtos.Review;
+using OnlineAuction.Dtos.ReviewDtos;
 using OnlineAuction.Models;
 
 namespace OnlineAuction.services.ReviewService

@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
-using OnlineAuction.Dtos.Product;
+using OnlineAuction.Dtos.ProductDtos;
 using OnlineAuction.Models;
 using OnlineAuction.Services.ProductService;
 using System.Collections.Generic;
