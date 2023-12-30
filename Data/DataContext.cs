@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OnlineAuction.Models;
+using System;
 
 namespace OnlineAuction.Data
 {
@@ -12,13 +13,17 @@ namespace OnlineAuction.Data
         public DataContext(DbContextOptions options, 
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
-
         }
         #endregion
 
         #region Methods
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            if (modelBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(modelBuilder));
+            }
+
             base.OnModelCreating(modelBuilder);
             //Map Entity names to DB table names
             modelBuilder.Entity<City>().ToTable("Cities");
