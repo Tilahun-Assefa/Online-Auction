@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using OnlineAuction.Dtos.Product;
 using OnlineAuction.Models;
 using OnlineAuction.Services.ProductService;
