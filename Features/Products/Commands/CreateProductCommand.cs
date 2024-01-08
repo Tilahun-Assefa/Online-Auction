@@ -11,7 +11,7 @@ namespace OnlineAuction.Features.Products.Commands
 {
     public class CreateProductCommand : IRequest<ServiceResponse<GetProductDto>>
     {
-        public string Title { get; set; }
+        public string Name { get; set; }
         public float Price { get; set; }
         public string Description { get; set; }
         public string ImgPath { get; set; }
@@ -31,7 +31,7 @@ namespace OnlineAuction.Features.Products.Commands
             {
                 Product product = new()
                 {
-                    Name = command.Title,
+                    Name = command.Name,
                     Price = command.Price,
                     Description = command.Description,
                     ImgPath = command.ImgPath,
