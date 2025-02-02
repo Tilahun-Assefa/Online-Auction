@@ -6,11 +6,7 @@ using OnlineAuction.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using OnlineAuction.Dtos.Category;
 using OnlineAuction.Dtos.Review;
-using System.Diagnostics.Metrics;
 
 namespace OnlineAuction.Services.ProductService
 {
