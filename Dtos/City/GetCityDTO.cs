@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace OnlineAuction.Dtos.City
+﻿namespace OnlineAuction.Dtos.City
 {
     public class GetCityDTO
     {

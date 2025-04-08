@@ -5,8 +5,6 @@
     <StartupObject>OnlineAuction.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AutoMapper" />
-    <PackageReference Include="Duende.IdentityServer" />
     <PackageReference Include="EPPlus" />
     <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />

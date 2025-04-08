@@ -63,7 +63,7 @@ namespace OnlineAuction.Models
 
             //retieve the SQL query (for debug purposes)
 #if DEBUG
-            var sql = source.ToSql();
+            //var sql = source.ToSql();
 
             var data = await source.ToListAsync();
             return new ApiResult<T>(data, count, pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);

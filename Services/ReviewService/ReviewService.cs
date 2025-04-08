@@ -2,26 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using OnlineAuction.Data;
-using OnlineAuction.Dtos.Product;
 using OnlineAuction.Dtos.Review;
 using OnlineAuction.Models;
 
 namespace OnlineAuction.services.ReviewService
 {
-    public class ReviewService : IReviewService
+    public class ReviewService(DataContext context) : IReviewService
     {
-        private readonly DataContext _context;
-        public ReviewService(DataContext context)
-        {
-            _context = context;
-        }
+        private readonly DataContext _context = context;
 
         public async Task<ServiceResponse<List<GetReviewDto>>> GetAllReviews(int id)
         {
-            ServiceResponse<List<GetReviewDto>> serviceResponse = new ServiceResponse<List<GetReviewDto>>();
+            ServiceResponse<List<GetReviewDto>> serviceResponse = new();
             List<Review> reviews = await _context.Reviews.Include(r => r.Product)
                 .Where(r => r.Product.Id == id).ToListAsync();
 

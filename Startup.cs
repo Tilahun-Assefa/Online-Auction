@@ -108,8 +108,8 @@ namespace OnlineAuction
             .AllowAnyMethod()
             .AllowAnyHeader());
 
-            app.UseAuthentication();
-            app.UseIdentityServer();
+            //app.UseAuthentication();
+            //app.UseIdentityServer();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
